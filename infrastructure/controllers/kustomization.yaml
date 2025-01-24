@@ -3,10 +3,10 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  # - ceph-csi.yaml
   - ceph-csi-rbd.yaml
   - cert-manager.yaml
   - https://github.com/rancher/system-upgrade-controller/releases/download/v0.14.2/system-upgrade-controller.yaml
+  - cloudnative-pg.yaml
   # Elastic on K8s
   # - https://download.elastic.co/downloads/eck/2.15.0/crds.yaml
   # - https://download.elastic.co/downloads/eck/2.15.0/operator.yaml
