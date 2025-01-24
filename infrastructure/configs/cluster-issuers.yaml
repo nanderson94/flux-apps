@@ -1,0 +1,37 @@
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-prod
+spec:
+  acme:
+    email: nic@nic-a.net
+    privateKeySecretRef:
+      name: letsencrypt-prod
+    server: https://acme-v02.api.letsencrypt.org/directory
+    solvers:
+      - dns01:
+          route53:
+            accessKeyIDSecretRef:
+              key: access-key-id
+              name: prod-route53-credentials-secret
+            hostedZoneID: Z03550912CN97528HTPQL
+            region: us-east-1
+            secretAccessKeySecretRef:
+              key: secret-access-key
+              name: prod-route53-credentials-secret
+        selector:
+          dnsZones:
+            - nic-a.net
+      - dns01:
+          route53:
+            accessKeyIDSecretRef:
+              key: access-key-id
+              name: prod-route53-credentials-secret
+            hostedZoneID: Z034741126WBXUD4IXEJY
+            region: us-east-1
+            secretAccessKeySecretRef:
+              key: secret-access-key
+              name: prod-route53-credentials-secret
+        selector:
+          dnsZones:
+            - n0t.dev
