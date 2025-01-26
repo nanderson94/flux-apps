@@ -1,0 +1,78 @@
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/source.toolkit.fluxcd.io/helmrepository_v1.json
+apiVerison: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: concourse
+  namespace: default
+spec:
+  interval: 2h
+  url: https://concourse-charts.storage.googleapis.com
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: concourse
+  namespace: default
+spec:
+  interval: 30m
+  targetNamespace: concourse
+  chart:
+    spec:
+      chart: concourse
+      version: "3.x"
+      sourceRef:
+        kind: HelmRepository
+        name: concourse
+        namespace: default
+      interval: 2h
+  values:
+    image: concourse
+    imageTag: '7.12'
+    concourse:
+      web:
+        clusterName: nandernet
+        externalUrl: https://ci.nic-a.net
+        localAuth:
+          enabled: false
+        auth:
+          cookieSecure: true
+          mainTeam:
+            oidc:
+              user: nic
+          oidc:
+            enabled: true
+            displayName: Gitea
+            groupsKey: groups
+            issuer: https://git.nic-a.net/
+        postgres:
+          host: XXX
+          database: XXX
+        kubernetes:
+          enabled: false
+        vault:
+          enabled: true
+          url: https://vault.iad1.nic-a.net
+          authBackend: approle
+          useAuthParam: true
+        prometheus:
+          enabled: true
+          serviceMonitor:
+            enabled: false
+      worker:
+        runtime: containerd
+    worker:
+      replicas: 3
+    web:
+      replicas: 1
+      ingress:
+        enabed: true
+    persistence:
+      enabled: true
+      worker:
+        size: 1000Gi
+        storageClass: xxx
+    postgresql:
+      enabled: false
+    secrets:
+      create: false
